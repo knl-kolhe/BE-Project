@@ -9,6 +9,7 @@ import pytesseract
 #import imageio
 import cv2
 import numpy as np
+import re
 
 #------------------------------------------------------------------------------
 def getMaxIdx(values):
@@ -127,15 +128,16 @@ def variance_of_laplacian(image):
 	return cv2.Laplacian(image, cv2.CV_64F).var()
 #------------------------------------------------------------------------------
 pytesseract.pytesseract.tesseract_cmd = r'C:\!Kunal\Tesseract-OCR\tesseract.exe'
-
+'''
 img=Scan()
 val=variance_of_laplacian(img)
 print("Blurry Variance:",val)
-blurthresh=600
+blurthresh=550
 if val<blurthresh:
     print("Image is blurry, Please Try Again.")
     img=None
-#img = cv2.imread('I_1.png',-1)
+'''
+img = cv2.imread('I_0.png',-1)
 #img=cv2.resize(img,(800,500))
 if img is None:
     print("Image not captured/not captured properly. Press Spacebar when window is open to capture image.")
@@ -144,15 +146,21 @@ else:
     #img=Gamma_correction(img)
     #display(img)
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    
     outputs=[]
+    
+    reg=r"(\d)|(/)|(\n)|( )"
     '''manual thresholding'''
     #Bigger number more black, Smaller number more white. Start at 70 till you get a good image
     for thresh in range(70,90,5):
         im_bw = cv2.threshold(img_gray, thresh, 255, cv2.THRESH_BINARY)[1]
-        #display(im_bw)
-        outputs.append(pytesseract.image_to_string(im_bw,lang="eng"))
-        print("----String, Manual Threshold: ",outputs[-1])
+        display(im_bw)
+        tempstr=pytesseract.image_to_string(im_bw,lang="eng")
+        temp=""
+        for i in range(0,len(tempstr)):
+            if re.match(reg, tempstr[i]):
+                temp=temp+tempstr[i]
+        outputs.append(temp)
+        print("----String, Manual Threshold ",thresh,": ",outputs[-1])
     
     strlen=[]
     for op in outputs:
@@ -165,6 +173,6 @@ else:
     
     card_num=parse_2(Bstr)
     print("Method 2: ",card_num)
-
+    
 #helllooooochanging
 
