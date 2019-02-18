@@ -106,10 +106,10 @@ class CardOCR:
         self.BestString=self.__chooseBestString(outputs)
         
         self.CardNumber1=self.__parse_1(self.BestString)
-        print("Parsed Card Number (Simple): ",self.CardNumber1)
+        print("Parsed Card Number (1): ",self.CardNumber1)
         
         self.CardNumber2=self.__parse_2(self.BestString)
-        print("Parsed Card Number (Simple): ",self.CardNumber2)
+        print("Parsed Card Number (2): ",self.CardNumber2)
     
     def __chooseBestString(self, Strings):
         strlen=[]
@@ -120,6 +120,13 @@ class CardOCR:
     
     def __parse_1(self,Bstr):
         card_no=''
+        parts=Bstr.split("\n")
+        strlen=[]
+        for op in parts:
+            strlen.append(len(op))
+        
+        card_no=parts[strlen.index(max(strlen))]
+        '''
         for i in range(0,len(Bstr)):
             if Bstr[i].isnumeric():
                 if len(Bstr)>i+19:
@@ -130,6 +137,7 @@ class CardOCR:
                     break
                 else:
                     card_no=Bstr[i:-1]
+        '''
         return card_no
     
     def __parse_2(self,Bstr):
