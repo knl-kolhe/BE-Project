@@ -6,6 +6,7 @@ Created on Mon Feb 18 11:01:16 2019
 """
 import cv2
 import pytesseract
+import re
 #This is class to perform OCR operations on a card
 class CardOCR:
     def __init__(self,tesseractPath=None):
@@ -87,14 +88,19 @@ class CardOCR:
         
     def OCR(self):
         img_gray = cv2.cvtColor(self.__image, cv2.COLOR_BGR2GRAY)
-        
+        reg=r"(\d)|(/)|(\n)|( )"
         outputs=[]
         '''manual thresholding'''
         #Bigger number more black, Smaller number more white. Start at 70 till you get a good image
         for thresh in range(70,90,5):
             im_bw = cv2.threshold(img_gray, thresh, 255, cv2.THRESH_BINARY)[1]
             #display(im_bw)
-            outputs.append(pytesseract.image_to_string(im_bw,lang="eng"))
+            tempstr=pytesseract.image_to_string(im_bw,lang="eng")
+            temp=""
+            for i in range(0,len(tempstr)):
+                if re.match(reg, tempstr[i]):
+                    temp=temp+tempstr[i]
+            outputs.append(temp)
             print("----String, Manual Threshold: ",outputs[-1])
         
         self.BestString=self.__chooseBestString(outputs)
