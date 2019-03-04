@@ -11,7 +11,8 @@ from CardOCR import CardOCR
 CardOCR().Help()
 c=CardOCR(r'C:\!Kunal\Tesseract-OCR\tesseract.exe')
 c.Scan()
-#c.display()
+#c.ReadImg()
+c.display()
 while True:
     if(c.isBlur()==True):
         print("Image not captured/not captured properly. Press Spacebar when window is open to capture image.")

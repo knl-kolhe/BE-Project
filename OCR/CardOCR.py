@@ -15,6 +15,9 @@ class CardOCR:
         print(tesseractPath)
         pytesseract.pytesseract.tesseract_cmd = tesseractPath
 
+
+    def ReadImg(self):
+        self.__image=cv2.imread("I_00.png",-1)
         
     def Scan(self):
         cam = cv2.VideoCapture(0)
