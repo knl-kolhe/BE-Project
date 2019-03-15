@@ -1,0 +1,74 @@
+#for image credit_card_01.png
+
+----String, Manual Threshold @  70 :  
+Parsed Card Number (1):  
+Parsed Card Number (2):  []
+----String, Manual Threshold @  75 :  
+Parsed Card Number (1):  
+Parsed Card Number (2):  []
+----String, Manual Threshold @  80 :  4000  4010
+
+  0
+ 
+ 3
+Parsed Card Number (1):  4000  4010
+Parsed Card Number (2):  ['4000', '4010']
+----String, Manual Threshold @  85 :  
+
+ 1234 5678 4010
+Parsed Card Number (1):   1234 5678 4010
+Parsed Card Number (2):  ['1234', '5678', '4010']
+----String, Manual Threshold @  90 :  4000 1234 5678 94010
+
+4000
+24   /
+  
+Parsed Card Number (1):  4000 1234 5678 94010
+Parsed Card Number (2):  ['4000', '1234', '5678', '4000']
+----String, Manual Threshold @  95 :  4000 1234 5678 94010
+
+  04/17
+ 
+
+
+Parsed Card Number (1):  4000 1234 5678 94010
+Parsed Card Number (2):  ['4000', '1234', '5678', '4000']
+
+#for image_credit_card_02.png
+----String, Manual Threshold @  70 :  4020 3400 234 5678
+
+  
+Parsed Card Number (1):  4020 3400 234 5678
+Parsed Card Number (2):  ['4020', '3400', '5678']
+----String, Manual Threshold @  75 :  4020 3400 234 5678
+
+  
+Parsed Card Number (1):  4020 3400 234 5678
+Parsed Card Number (2):  ['4020', '3400', '5678']
+----String, Manual Threshold @  80 :  4020 3400 234 5678
+
+  
+Parsed Card Number (1):  4020 3400 234 5678
+Parsed Card Number (2):  ['4020', '3400', '5678']
+----String, Manual Threshold @  85 :  4020 3400 234 5678
+
+  
+Parsed Card Number (1):  4020 3400 234 5678
+Parsed Card Number (2):  ['4020', '3400', '5678']
+----String, Manual Threshold @  90 :  4020 3400 234 5678
+
+  
+Parsed Card Number (1):  4020 3400 234 5678
+Parsed Card Number (2):  ['4020', '3400', '5678']
+----String, Manual Threshold @  95 :  
+
+4020 3400 234 5678
+
+  
+
+  
+
+
+
+Parsed Card Number (1):  4020 3400 234 5678
+Parsed Card Number (2):  ['4020', '3400', '5678']
