@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 """
+Created on Sat Mar 23 12:11:42 2019
+
+@author: KK
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Thu Jan  3 02:08:32 2019
 
 @author: Kunal
@@ -127,38 +134,100 @@ def variance_of_laplacian(image):
 	# compute the Laplacian of the image and then return the focus
 	# measure, which is simply the variance of the Laplacian
 	return cv2.Laplacian(image, cv2.CV_64F).var()
+
+class CropLayer(object):
+	def __init__(self, params, blobs):
+		# initialize our starting and ending (x, y)-coordinates of
+		# the crop
+		self.startX = 0
+		self.startY = 0
+		self.endX = 0
+		self.endY = 0
+
+	def getMemoryShapes(self, inputs):
+		# the crop layer will receive two inputs -- we need to crop
+		# the first input blob to match the shape of the second one,
+		# keeping the batch size and number of channels
+		(inputShape, targetShape) = (inputs[0], inputs[1])
+		(batchSize, numChannels) = (inputShape[0], inputShape[1])
+		(H, W) = (targetShape[2], targetShape[3])
+
+		# compute the starting and ending crop coordinates
+		self.startX = int((inputShape[3] - targetShape[3]) / 2)
+		self.startY = int((inputShape[2] - targetShape[2]) / 2)
+		self.endX = self.startX + W
+		self.endY = self.startY + H
+
+		# return the shape of the volume (we'll perform the actual
+		# crop during the forward pass
+		return [[batchSize, numChannels, H, W]]
+
+	def forward(self, inputs):
+		# use the derived (x, y)-coordinates to perform the crop
+		return [inputs[0][:, :, self.startY:self.endY,
+				self.startX:self.endX]]
+
 #------------------------------------------------------------------------------
 pytesseract.pytesseract.tesseract_cmd = r'E:\!Kunal\Tesseract-OCR\tesseract.exe'
 import re
 
-'''
+
 img=Scan()
+print('here')
 val=variance_of_laplacian(img)
 print("Blurry Variance:",val)
 blurthresh=600
 if val<blurthresh:
     print("Image is blurry, Please Try Again.")
     img=None
-'''
 
-img = cv2.imread("credit_card_01.png",-1)
+
+net = cv2.dnn.readNetFromCaffe("holistically-nested-edge-detection\hed_model\deploy.prototxt", "holistically-nested-edge-detection\hed_model\hed_pretrained_bsds.caffemodel")
+
+# register our new layer with the model
+cv2.dnn_registerLayer("Crop", CropLayer)
+
+#img = cv2.imread("I_00.png",-1)
+
+
 #img=cv2.resize(img,(800,500))
 if img is None:
     print("Image not captured/not captured properly. Press Spacebar when window is open to capture image.")
 else:
+    (H, W) = img.shape[:2]
+
+    print("[INFO] performing Canny edge detection...")
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    canny = cv2.Canny(gray, 30, 150)
+    
+    blob = cv2.dnn.blobFromImage(img, scalefactor=1.0, size=(W, H),
+    	mean=(104.00698793, 116.66876762, 122.67891434),
+    	swapRB=False, crop=False)
+    
+    # set the blob as the input to the network and perform a forward pass
+    # to compute the edges
+    print("[INFO] performing holistically-nested edge detection...")
+    net.setInput(blob)
+    hed = net.forward()
+    hed = cv2.resize(hed[0, 0], (W, H))
+    hed = (255 * hed).astype("uint8")
+    
     display(img)
+    display(canny)
+    display(hed)
     #img=Gamma_correction(img)
     #display(img)
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     reg=r"(\d)|(/)|(\n)|( )"
     outputs=[]
     '''manual thresholding'''
-    
+    '''
     #Bigger number more black, Smaller number more white. Start at 70 till you get a good image
     for thresh in range(70,100,5):
         im_bw = cv2.threshold(img_gray, thresh, 255, cv2.THRESH_BINARY)[1]
         display(im_bw)
-        cv2.imwrite("Card_Image_01_"+str(thresh)+".png",im_bw)
+        #cv2.imwrite("Card_Image_01_"+str(thresh)+".png",im_bw)
         tempstr=pytesseract.image_to_string(im_bw,lang="eng")
         temp=""
         for i in range(0,len(tempstr)):
@@ -174,6 +243,41 @@ else:
         
         CardNumber2=parse_2(BestString)
         print("Parsed Card Number (2): ",CardNumber2)
+    
+    '''
+    
+    tempstr=pytesseract.image_to_string(canny,lang="eng")
+    temp=""
+    for i in range(0,len(tempstr)):
+        if re.match(reg, tempstr[i]):
+            temp=temp+tempstr[i]
+    outputs.append(temp)
+    #print("----String, Manual Threshold @ ",thresh,": ",outputs[-1])
+    
+    BestString=temp#outputs[-1]#chooseBestString(outputs)
+    
+    CardNumber1=parse_1(BestString)
+    print("Parsed Card Number canny (1): ",CardNumber1)
+    
+    CardNumber2=parse_2(BestString)
+    print("Parsed Card Number (2): ",CardNumber2)
+    
+    tempstr=""
+    tempstr=pytesseract.image_to_string(hed,lang="eng")
+    temp=""
+    for i in range(0,len(tempstr)):
+        if re.match(reg, tempstr[i]):
+            temp=temp+tempstr[i]
+    outputs.append(temp)
+    #print("----String, Manual Threshold @ ",thresh,": ",outputs[-1])
+    print(temp,"hekki")
+    BestString=temp#outputs[-1]#  chooseBestString(outputs)
+    
+    CardNumber1=parse_1(BestString)
+    print("Parsed Card Number hed (1): ",CardNumber1)
+    
+    CardNumber2=parse_2(BestString)
+    print("Parsed Card Number (2): ",CardNumber2)
     
     
 

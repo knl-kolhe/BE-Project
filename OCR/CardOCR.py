@@ -112,7 +112,7 @@ class CardOCR:
         print("Parsed Card Number (1): ",self.CardNumber1)
         
         self.CardNumber2=self.__parse_2(self.BestString)
-        print("Parsed Card Number (2): ",self.CardNumber2)
+        print("Parsed Card Number (2): ",''.join([ f'{x} ' for x in self.CardNumber2 ]))
     
     def __chooseBestString(self, Strings):
         strlen=[]
@@ -167,4 +167,4 @@ class CardOCR:
               OCR() to perform OCR on the captured image. It returns parsed card number. \n\
               display() to display the image saved in Scan() ")
         
-    
+        

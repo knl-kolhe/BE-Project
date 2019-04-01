@@ -11,7 +11,7 @@ from CardOCR import CardOCR
 CardOCR().Help()
 c=CardOCR(r'E:\!Kunal\Tesseract-OCR\tesseract.exe')
 #c.Scan()
-c.ReadImg("credit_card_01.png")
+c.ReadImg("I_00.png")
 c.display()
 while True:
     if(c.isBlur()==True):
