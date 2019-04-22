@@ -187,8 +187,8 @@ if val<blurthresh:
 # register our new layer with the model
 cv2.dnn_registerLayer("Crop", CropLayer)
 
-#img = cv2.imread("I_01.png",-1)
-img = cv2.imread("credit_card_01.png",-1)
+img = cv2.imread("I_01.png",-1)
+#img = cv2.imread("credit_card_01.png",-1)
 
 #img=cv2.resize(img,(800,500))
 if img is None:
@@ -261,6 +261,7 @@ else:
     #-----------------------------------------------canny--------------------------------------
     tempstr=pytesseract.image_to_string(canny,lang="eng")
     display(canny,"Canny")
+    cv2.imwrite("Canny.jpg",canny)
     temp=""
     for i in range(0,len(tempstr)):
         if re.match(reg, tempstr[i]):

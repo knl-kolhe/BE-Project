@@ -95,7 +95,7 @@ class CardOCR:
         outputs=[]
         '''manual thresholding'''
         #Bigger number more black, Smaller number more white. Start at 70 till you get a good image
-        for thresh in range(70,100,5):
+        for thresh in range(70,105,15):
             im_bw = cv2.threshold(img_gray, thresh, 255, cv2.THRESH_BINARY)[1]
             #display(im_bw)
             tempstr=pytesseract.image_to_string(im_bw,lang="eng")
@@ -104,7 +104,16 @@ class CardOCR:
                 if re.match(reg, tempstr[i]):
                     temp=temp+tempstr[i]
             outputs.append(temp)
-            print("----String, Manual Threshold: ",outputs[-1])
+            #print("----String, Manual Threshold: ",outputs[-1])
+        
+        #print("[INFO] performing Canny edge detection...")
+        canny = cv2.Canny(img_gray, 30, 150)
+        tempstr=pytesseract.image_to_string(canny,lang="eng")
+        temp=""
+        for i in range(0,len(tempstr)):
+            if re.match(reg, tempstr[i]):
+                temp=temp+tempstr[i]
+        outputs.append(temp)
         
         self.BestString=self.__chooseBestString(outputs)
         
