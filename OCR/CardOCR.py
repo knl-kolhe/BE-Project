@@ -65,12 +65,12 @@ class CardOCR:
         del cam
         #return img
 
-    def display(self):
+    def display(self,string="Image"):
         
         if self.__image is None:
             print("Call the Scan Function and capture image before calling display()")
         else:
-            cv2.imshow('Image',self.__image)
+            cv2.imshow(string,self.__image)
             cv2.waitKey(0)
             cv2.destroyAllWindows()
     

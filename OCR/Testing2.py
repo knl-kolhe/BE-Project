@@ -67,8 +67,8 @@ def Scan():
     del cam
     return img
 
-def display(img):
-    cv2.imshow('Image',img)
+def display(img,string="Image"):
+    cv2.imshow(string,img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     
@@ -171,7 +171,7 @@ class CropLayer(object):
 pytesseract.pytesseract.tesseract_cmd = r'E:\!Kunal\Tesseract-OCR\tesseract.exe'
 import re
 
-
+'''
 img=Scan()
 print('here')
 val=variance_of_laplacian(img)
@@ -180,15 +180,15 @@ blurthresh=600
 if val<blurthresh:
     print("Image is blurry, Please Try Again.")
     img=None
+'''
 
-
-net = cv2.dnn.readNetFromCaffe("holistically-nested-edge-detection\hed_model\deploy.prototxt", "holistically-nested-edge-detection\hed_model\hed_pretrained_bsds.caffemodel")
+#net = cv2.dnn.readNetFromCaffe("holistically-nested-edge-detection\hed_model\deploy.prototxt", "holistically-nested-edge-detection\hed_model\hed_pretrained_bsds.caffemodel")
 
 # register our new layer with the model
 cv2.dnn_registerLayer("Crop", CropLayer)
 
-#img = cv2.imread("I_00.png",-1)
-
+#img = cv2.imread("I_01.png",-1)
+img = cv2.imread("credit_card_01.png",-1)
 
 #img=cv2.resize(img,(800,500))
 if img is None:
@@ -200,7 +200,9 @@ else:
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
     canny = cv2.Canny(gray, 30, 150)
-    
+    '''
+    #blurred1=cv2.GaussianBlur(img,(5,5),0)
+    #(H, W) = blurred1.shape[:2]
     blob = cv2.dnn.blobFromImage(img, scalefactor=1.0, size=(W, H),
     	mean=(104.00698793, 116.66876762, 122.67891434),
     	swapRB=False, crop=False)
@@ -212,10 +214,21 @@ else:
     hed = net.forward()
     hed = cv2.resize(hed[0, 0], (W, H))
     hed = (255 * hed).astype("uint8")
-    
-    display(img)
-    display(canny)
+    kernel = np.ones((5,5),np.uint8)
+    '''
+    display(img,"normal")
+    #display(canny)
+    #display(hed)
+    '''
     display(hed)
+    dilation = cv2.dilate(hed,kernel,iterations = 1)
+    display(dilation)
+    dilation = cv2.dilate(hed,kernel,iterations = 1)
+    display(dilation)
+    dilation = cv2.dilate(hed,kernel,iterations = 1)
+    display(dilation)
+     '''
+    
     #img=Gamma_correction(img)
     #display(img)
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -245,8 +258,9 @@ else:
         print("Parsed Card Number (2): ",CardNumber2)
     
     '''
-    
+    #-----------------------------------------------canny--------------------------------------
     tempstr=pytesseract.image_to_string(canny,lang="eng")
+    display(canny,"Canny")
     temp=""
     for i in range(0,len(tempstr)):
         if re.match(reg, tempstr[i]):
@@ -262,8 +276,30 @@ else:
     CardNumber2=parse_2(BestString)
     print("Parsed Card Number (2): ",CardNumber2)
     
-    tempstr=""
+    #----------------------------------------------------------HED---------------------------
+    '''
     tempstr=pytesseract.image_to_string(hed,lang="eng")
+    display(hed,"HED" )
+    temp=""
+    for i in range(0,len(tempstr)):
+        if re.match(reg, tempstr[i]):
+            temp=temp+tempstr[i]
+    outputs.append(temp)
+    #print("----String, Manual Threshold @ ",thresh,": ",outputs[-1])
+    print(temp,"hekki")
+    BestString=temp#outputs[-1]#  chooseBestString(outputs)
+    
+    CardNumber1=parse_1(BestString)
+    print("Parsed Card Number hed (1): ",CardNumber1)
+    
+    CardNumber2=parse_2(BestString)
+    print("Parsed Card Number (2): ",CardNumber2)
+    '''
+    '''
+    dilation = cv2.dilate(hed,kernel,iterations = 1)
+    tempstr=""
+    display(dilation)
+    tempstr=pytesseract.image_to_string(dilation,lang="eng")    
     temp=""
     for i in range(0,len(tempstr)):
         if re.match(reg, tempstr[i]):
@@ -279,6 +315,63 @@ else:
     CardNumber2=parse_2(BestString)
     print("Parsed Card Number (2): ",CardNumber2)
     
+    dilation = cv2.dilate(dilation,kernel,iterations = 1)
+    tempstr=""
+    display(dilation)
+    tempstr=pytesseract.image_to_string(dilation,lang="eng")    
+    temp=""
+    for i in range(0,len(tempstr)):
+        if re.match(reg, tempstr[i]):
+            temp=temp+tempstr[i]
+    outputs.append(temp)
+    #print("----String, Manual Threshold @ ",thresh,": ",outputs[-1])
+    print(temp,"hekki")
+    BestString=temp#outputs[-1]#  chooseBestString(outputs)
     
-
+    CardNumber1=parse_1(BestString)
+    print("Parsed Card Number hed (1): ",CardNumber1)
+    
+    CardNumber2=parse_2(BestString)
+    print("Parsed Card Number (2): ",CardNumber2)
+    
+    dilation = cv2.dilate(dilation,kernel,iterations = 1)    
+    tempstr=""
+    display(dilation)
+    tempstr=pytesseract.image_to_string(dilation,lang="eng")    
+    temp=""
+    for i in range(0,len(tempstr)):
+        if re.match(reg, tempstr[i]):
+            temp=temp+tempstr[i]
+    outputs.append(temp)
+    #print("----String, Manual Threshold @ ",thresh,": ",outputs[-1])
+    print(temp,"hekki")
+    BestString=temp#outputs[-1]#  chooseBestString(outputs)
+    
+    CardNumber1=parse_1(BestString)
+    print("Parsed Card Number hed (1): ",CardNumber1)
+    
+    CardNumber2=parse_2(BestString)
+    print("Parsed Card Number (2): ",CardNumber2)
+    
+    dilation = cv2.dilate(dilation,kernel,iterations = 1)
+    tempstr=""
+    display(dilation)
+    tempstr=pytesseract.image_to_string(dilation,lang="eng")    
+    temp=""
+    for i in range(0,len(tempstr)):
+        if re.match(reg, tempstr[i]):
+            temp=temp+tempstr[i]
+    outputs.append(temp)
+    #print("----String, Manual Threshold @ ",thresh,": ",outputs[-1])
+    print(temp,"hekki")
+    BestString=temp#outputs[-1]#  chooseBestString(outputs)
+    
+    CardNumber1=parse_1(BestString)
+    print("Parsed Card Number hed (1): ",CardNumber1)
+    
+    CardNumber2=parse_2(BestString)
+    print("Parsed Card Number (2): ",CardNumber2)
+    
+    '''
+    
 
