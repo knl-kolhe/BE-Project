@@ -116,41 +116,71 @@ class CardOCR:
         outputs.append(temp)
         
         self.BestString=self.__chooseBestString(outputs)
+        print(self.BestString)
+        self.CardNumber1=self.__parse_card_no(self.BestString)
+        #print("Parsed Card Number (1): ",self.CardNumber1)
         
-        self.CardNumber1=self.__parse_1(self.BestString)
-        print("Parsed Card Number (1): ",self.CardNumber1)
+        self.ExpiryDate=self.__parse_expiry_no(self.BestString)
         
-        self.CardNumber2=self.__parse_2(self.BestString)
-        print("Parsed Card Number (2): ",''.join([ f'{x} ' for x in self.CardNumber2 ]))
+        return self.CardNumber1,self.ExpiryDate,self.__luhn(self.CardNumber1)
+        #self.CardNumber2=self.__parse_2(self.BestString)
+        #print("Parsed Card Number (2): ",''.join([ f'{x} ' for x in self.CardNumber2 ]))
     
+    '''
     def __chooseBestString(self, Strings):
         strlen=[]
         for op in Strings:
             strlen.append(sum(c.isdigit() for c in op))
         
         return Strings[strlen.index(max(strlen))]
+    '''
+    def __chooseBestString(self, Strings):
+        scores=[]
+        for op in Strings:
+            score=0
+            card_no=self.__parse_card_no(op)
+            if self.__luhn(card_no):
+                score+=10
+            reg=r"(/)"
+            for i in range(0,len(op)):
+                if re.match(reg, op[i]):
+                    score+=3
+            scores.append(sum(c.isdigit() for c in op)+score)
+        
+        return Strings[scores.index(max(scores))]
     
-    def __parse_1(self,Bstr):
+    
+    
+    def __parse_card_no(self,Bstr):
         card_no=''
         parts=Bstr.split("\n")
         strlen=[]
         for op in parts:
             strlen.append(len(op))
         
-        card_no=parts[strlen.index(max(strlen))]
-        '''
-        for i in range(0,len(Bstr)):
-            if Bstr[i].isnumeric():
-                if len(Bstr)>i+19:
-                    card_no=Bstr[i:i+19]
-                    #if '\n' in card_no:
-                    #    card_no=''
-                    #else:
-                    break
-                else:
-                    card_no=Bstr[i:-1]
-        '''
+        temp=parts[strlen.index(max(strlen))]
+        
+        reg=r"(\d)"
+        card_no=""
+        for i in range(0,len(temp)):
+            if re.match(reg, temp[i]):
+                card_no=card_no+temp [i]
+        
         return card_no
+    
+    def __parse_expiry_no(self,Bstr):
+        
+        reg=r"(\d)"
+        for i in range(len(Bstr)-1,0,-1):
+            if re.match(reg,Bstr[i]):
+                break;
+        
+        reg2=r"( )"
+        for j in range(i,0,-1):
+            if re.match(reg2,Bstr[j]):
+                break;
+        expiry=Bstr[j+1:i+1]
+        return expiry
     
     def __parse_2(self,Bstr):
         parts=Bstr.split('\n')
@@ -167,13 +197,23 @@ class CardOCR:
                 
         return card_num
     
+    def __luhn(self,card_no):
+        sum = 0
+        for i,c in enumerate(card_no):
+            num = (2-(i % 2)) * int(c)
+            sum += int(num/10) + (num % 10)
+    	#print sum
+        return ((sum % 10) == 0)
+	
+    
     def Help(self):                    
         print("Functions available are: \n\
               Scan() to open camera and capture image \n\
               isBlur() to test whether image is blurred or not. \n\
               \tReturn True if blur. \n\
               \tReturns False if not blur. \n\
-              OCR() to perform OCR on the captured image. It returns parsed card number. \n\
-              display() to display the image saved in Scan() ")
+              OCR() to perform OCR on the captured image. It returns parsed card number and parsed expiry date. \n\
+              display() to display the image saved in Scan() \n\
+              readImg() is used to read an image from memory to perform OCR on it.")
         
         

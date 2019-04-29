@@ -107,12 +107,32 @@ def chooseBestString(Strings):
     return Strings[strlen.index(max(strlen))]
     
 def parse_1(Bstr):
+    
+    '''
+        for i in range(0,len(Bstr)):
+            if Bstr[i].isnumeric():
+                if len(Bstr)>i+19:
+                    card_no=Bstr[i:i+19]
+                    #if '\n' in card_no:
+                    #    card_no=''
+                    #else:
+                    break
+                else:
+                    card_no=Bstr[i:-1]
+    '''
+    
     card_no=''
     parts=Bstr.split("\n")
     strlen=[]
     for op in parts:
         strlen.append(len(op))        
-    card_no=parts[strlen.index(max(strlen))]
+    temp=parts[strlen.index(max(strlen))]
+    
+    reg=r"(\d)"
+    card_no=""
+    for i in range(0,len(temp)):
+        if re.match(reg, temp[i]):
+            card_no=card_no+temp [i]
     
     return card_no
     
@@ -185,9 +205,9 @@ if val<blurthresh:
 #net = cv2.dnn.readNetFromCaffe("holistically-nested-edge-detection\hed_model\deploy.prototxt", "holistically-nested-edge-detection\hed_model\hed_pretrained_bsds.caffemodel")
 
 # register our new layer with the model
-cv2.dnn_registerLayer("Crop", CropLayer)
+#cv2.dnn_registerLayer("Crop", CropLayer)
 
-img = cv2.imread("I_01.png",-1)
+img = cv2.imread("I_02.png",-1)
 #img = cv2.imread("credit_card_01.png",-1)
 
 #img=cv2.resize(img,(800,500))
@@ -235,9 +255,9 @@ else:
     reg=r"(\d)|(/)|(\n)|( )"
     outputs=[]
     '''manual thresholding'''
-    '''
+    
     #Bigger number more black, Smaller number more white. Start at 70 till you get a good image
-    for thresh in range(70,100,5):
+    for thresh in range(70,105,15):
         im_bw = cv2.threshold(img_gray, thresh, 255, cv2.THRESH_BINARY)[1]
         display(im_bw)
         #cv2.imwrite("Card_Image_01_"+str(thresh)+".png",im_bw)
@@ -248,16 +268,16 @@ else:
                 temp=temp+tempstr[i]
         outputs.append(temp)
         print("----String, Manual Threshold @ ",thresh,": ",outputs[-1])
+    '''   
+    BestString=chooseBestString(outputs)
         
-        BestString=chooseBestString(outputs)
+    CardNumber1=parse_1(BestString)
+    print("Parsed Card Number (1): ",CardNumber1)
         
-        CardNumber1=parse_1(BestString)
-        print("Parsed Card Number (1): ",CardNumber1)
-        
-        CardNumber2=parse_2(BestString)
-        print("Parsed Card Number (2): ",CardNumber2)
-    
+    CardNumber2=parse_2(BestString)
+    print("Parsed Card Number (2): ",CardNumber2)
     '''
+    
     #-----------------------------------------------canny--------------------------------------
     tempstr=pytesseract.image_to_string(canny,lang="eng")
     display(canny,"Canny")
@@ -269,13 +289,31 @@ else:
     outputs.append(temp)
     #print("----String, Manual Threshold @ ",thresh,": ",outputs[-1])
     
-    BestString=temp#outputs[-1]#chooseBestString(outputs)
-    
+    BestString=chooseBestString(outputs)#outputs[-1]#chooseBestString(outputs)
+    print(BestString)
     CardNumber1=parse_1(BestString)
-    print("Parsed Card Number canny (1): ",CardNumber1)
+    print("Parsed Card Number (1): ",CardNumber1)
     
     CardNumber2=parse_2(BestString)
     print("Parsed Card Number (2): ",CardNumber2)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     #----------------------------------------------------------HED---------------------------
     '''
