@@ -35,8 +35,8 @@ def contrastive_loss(y_true, y_pred):
 
 def init():
     print("[INFO] loading face detector...")
-    protoPath = "../Liveness/face_detector/deploy.prototxt" #os.path.sep.join(["E:\!Kunal\ML\Liveness\face_detector", "deploy.prototxt"])
-    modelPath = "../Liveness/face_detector/res10_300x300_ssd_iter_140000.caffemodel" #os.path.sep.join(["E:\!Kunal\ML\Liveness\face_detector", "res10_300x300_ssd_iter_140000.caffemodel"])
+    protoPath = "face_detector/deploy.prototxt" #os.path.sep.join(["E:\!Kunal\ML\Liveness\face_detector", "deploy.prototxt"])
+    modelPath = "face_detector/res10_300x300_ssd_iter_140000.caffemodel" #os.path.sep.join(["E:\!Kunal\ML\Liveness\face_detector", "res10_300x300_ssd_iter_140000.caffemodel"])
     net = cv2.dnn.readNetFromCaffe(protoPath, modelPath)
     return net
 
