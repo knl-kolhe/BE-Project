@@ -112,6 +112,7 @@ class CardOCR:
             print("----String, Manual Threshold: ",outputs[-1])
         
         #print("[INFO] performing Canny edge detection...")
+        #blurred = cv2.GaussianBlur(img_gray, (5, 5), 1)
         canny = cv2.Canny(img_gray, 30, 150)
         tempstr=pytesseract.image_to_string(canny,lang="eng")
         temp=""
