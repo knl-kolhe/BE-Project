@@ -95,7 +95,7 @@ class CardOCR:
         outputs=[]
         '''manual thresholding'''
         #Bigger number more black, Smaller number more white. Start at 70 till you get a good image
-        for thresh in range(70,90,5):
+        for thresh in range(70,100,5):
             im_bw = cv2.threshold(img_gray, thresh, 255, cv2.THRESH_BINARY)[1]
             #display(im_bw)
             tempstr=pytesseract.image_to_string(im_bw,lang="eng")
