@@ -122,7 +122,7 @@ class CardOCR:
         outputs.append(temp)
         print("----String, Canny edge detection: ",outputs[-1])
         self.BestString=self.__chooseBestString(outputs)
-        print(self.BestString)
+        print("Best String: ",self.BestString)
         self.CardNumber1=self.__parse_card_no(self.BestString)
         #print("Parsed Card Number (1): ",self.CardNumber1)
         self.display_img(canny)
@@ -176,16 +176,19 @@ class CardOCR:
     
     def __parse_expiry_no(self,Bstr):
         
-        reg=r"(\d)"
+        reg=r"(/)"
+        flag=False
         for i in range(len(Bstr)-1,0,-1):
             if re.match(reg,Bstr[i]):
+                flag=True
                 break;
         
-        reg2=r"( )"
-        for j in range(i,0,-1):
-            if re.match(reg2,Bstr[j]):
-                break;
-        expiry=Bstr[j+1:i+1]
+        if flag:
+            if i-2>=0 and i+3<=len(Bstr):
+                expiry=Bstr[i-2:i+3]
+            else:
+                expiry=""
+            
         return expiry
     
     def __parse_2(self,Bstr):
@@ -222,7 +225,7 @@ class CardOCR:
               isBlur() to test whether image is blurred or not. \n\
               \tReturn True if blur. \n\
               \tReturns False if not blur. \n\
-              OCR() to perform OCR on the captured image. It returns parsed card number and parsed expiry date. \n\
+              OCR() to perform OCR on the captured image. It returns parsed card number and parsed expiry date and valid variable which tells whether parsed card is a valid card number or not. \n\
               display() to display the image saved in Scan() \n\
               readImg() is used to read an image from memory to perform OCR on it.")
         
