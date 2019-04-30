@@ -188,6 +188,8 @@ class CardOCR:
                 expiry=Bstr[i-2:i+3]
             else:
                 expiry=""
+        else:
+            expiry=""
             
         return expiry
     
