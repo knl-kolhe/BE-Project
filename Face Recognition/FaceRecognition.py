@@ -134,8 +134,8 @@ class FaceRecognition:
         return cv2.Laplacian(face, cv2.CV_64F).var()
 
     
-    def isBlur(self,face):
-        val=self.__variance_of_laplacian(face)
+    def isBlur(self):
+        val=self.__variance_of_laplacian(self.LiveFace)
         print("Blurry Variance:",val)
         blurthresh=800
         if val<blurthresh:
