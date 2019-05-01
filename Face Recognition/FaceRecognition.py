@@ -8,22 +8,27 @@ import cv2
 import numpy as np
 import keras.backend as K
 from keras.models import load_model
-import pytesseract
 
 class FaceRecognition:
 
-    def euclidean_distance(self,vects):
+    def __init__(self,FRmodelPath=r'../models/28-04-2019evenlargermodel.h5', protopath=r"../deploy.prototxt", modelpath=r"../res10_300x300_ssd_iter_140000.caffemodel"):
+        self.model=load_model(FRmodelPath, custom_objects={'contrastive_loss': self.__contrastive_loss})
+        self.protoPath = protopath
+        self.modelPath = modelpath
+        self.LiveFace=None
+    
+    def __euclidean_distance(self,vects):
         x, y = vects
         sum_square = K.sum(K.square(x - y), axis=1, keepdims=True)
         return K.sqrt(K.maximum(sum_square, K.epsilon()))
     
     
-    def eucl_dist_output_shape(self,shapes):
+    def __eucl_dist_output_shape(self,shapes):
         shape1, shape2 = shapes
         return (shape1[0], 1)
     
     
-    def contrastive_loss(self,y_true, y_pred):
+    def __contrastive_loss(self,y_true, y_pred):
         '''Contrastive loss from Hadsell-et-al.'06
         http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf
         '''
@@ -34,24 +39,19 @@ class FaceRecognition:
     
     
     
-    def __init__(self,tesseractPath=None):
-       
-        print(tesseractPath)
-        pytesseract.pytesseract.tesseract_cmd = tesseractPath
     
     
-    def initcaffemodel(self):
+    
+    def __initcaffemodel(self):
         print("[INFO] loading face detector...")
-        protoPath = "E:/face_detector/deploy.prototxt" #os.path.sep.join(["E:\!Kunal\ML\Liveness\face_detector", "deploy.prototxt"])
-        modelPath = "E:/face_detector/res10_300x300_ssd_iter_140000.caffemodel" #os.path.sep.join(["E:\!Kunal\ML\Liveness\face_detector", "res10_300x300_ssd_iter_140000.caffemodel"])
-        net = cv2.dnn.readNetFromCaffe(protoPath, modelPath)
+        net = cv2.dnn.readNetFromCaffe(self.protoPath, self.modelPath)
         return net
     
     def capture(self):
         
         if not 'net' in locals():
             # myVar exists.
-            net=self.initcaffemodel()
+            net=self.__initcaffemodel()
         
         cap = cv2.VideoCapture(0)
         
@@ -104,16 +104,14 @@ class FaceRecognition:
         # When everything done, release the capture
         cap.release()
         cv2.destroyAllWindows()
-        return face
+        self.LiveFace=face
     
     
-    #face1=capture()
-    #face2=capture()
-    
-    
-    
-    def display(self,img,msg="Image"):
-        cv2.imshow(msg,img)
+    def display(self):
+        if self.LiveFace==None:
+            print("No image captured yet")
+            return
+        cv2.imshow("Face Captured Live",self.LiveFace)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
     
@@ -139,60 +137,39 @@ class FaceRecognition:
     def isBlur(self,face):
         val=self.__variance_of_laplacian(face)
         print("Blurry Variance:",val)
-        blurthresh=600
+        blurthresh=800
         if val<blurthresh:
             return True
         else:
             return False
         
+    def __preprocessing(self,FaceImg):
+        FaceImg=cv2.resize(FaceImg,(92,112))      
+        FaceImg=cv2.cvtColor(FaceImg, cv2.COLOR_BGR2GRAY)
+        FaceImg=np.expand_dims(FaceImg,axis=2)
+        FaceImg=FaceImg.astype('float32')
+        FaceImg /= 255
+        FaceImg=np.expand_dims(FaceImg,axis=0)
+        return FaceImg
+
+    def RegisterId(self,identity):
+        self.capture()
+        IDImg=cv2.resize(self.LiveFace,(92,112))
+        IDImg=cv2.cvtColor(IDImg, cv2.COLOR_BGR2GRAY)
+        cv2.imwrite(identity+".jpg",IDImg)
+        self.LiveFace=None
+        return True
+    
+    def VerifyId(self,identity):
+            
+        face_img_link=identity+".jpg"
+        checkface=cv2.imread(face_img_link,-1)
+        checkface=self.__preprocessing(checkface)
         
-    def faceverify(self,face2):
-        model = load_model('28-04-2019evenlargermodel.h5', custom_objects={'contrastive_loss': self.contrastive_loss})
-        
-        #face1=cv2.imread("KK1.jpg",1)
-        #face2=cv2.imread("KK2.jpg",1)
-        
-        
-        #face=capture()
-        #faceresize= cv2.resize(face,(92,112))
-        #cv2.imwrite("AK1.jpg",faceresize)
-        #face1=cv2.imread('AK1.jpg',0)
-        face1= cv2.imread("AK1.jpg",-1)
-        #----------------------------
-       # face2=self.capture()
-        
-        f1=cv2.resize(face1,(92,112))
-        f2=cv2.resize(face2,(92,112))
-        
-        f1 = cv2.cvtColor(f1, cv2.COLOR_BGR2GRAY)
-        f2 = cv2.cvtColor(f2, cv2.COLOR_BGR2GRAY)
-        self.display(f1)
-        self.display(f2)
-        
-        f1=np.expand_dims(f1,axis=2)
-        f2=np.expand_dims(f2,axis=2)
-        #face=np.expand_dims(face,axis=)
-        
-        f1=f1.astype('float32')
-        f1 /= 255
-        f2=f2.astype('float32')
-        f2 /= 255
-        
-        
-        f1=np.expand_dims(f1,axis=0)
-        f2=np.expand_dims(f2,axis=0)
-        '''
-        face=cv2.resize(face,(92,112))
-        face=cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
-        face=np.expand_dims(face,axis=2)
-        face=face.astype('float32')
-        face/=255
-        face=np.expand_dims(face,axis=0)
-        '''
-        y_pred = model.predict([f1,f2])
+        y_pred = self.model.predict([self.LiveFace,checkface])
         
         
         if y_pred.ravel()<0.2:
-            print("It matches")
+            return True
         else:
-            print("It does not match")
+            return False
