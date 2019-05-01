@@ -11,7 +11,7 @@ from keras.models import load_model
 
 class FaceRecognition:
 
-    def __init__(self,FRmodelPath=r'../models/28-04-2019evenlargermodel.h5', protopath=r"../deploy.prototxt", modelpath=r"../res10_300x300_ssd_iter_140000.caffemodel"):
+    def __init__(self,FRmodelPath=r'../models/28-04-2019evenlargermodel.h5', protopath=r"../models/deploy.prototxt", modelpath=r"../models/res10_300x300_ssd_iter_140000.caffemodel"):
         self.model=load_model(FRmodelPath, custom_objects={'contrastive_loss': self.__contrastive_loss})
         self.protoPath = protopath
         self.modelPath = modelpath
@@ -134,8 +134,8 @@ class FaceRecognition:
         return cv2.Laplacian(face, cv2.CV_64F).var()
 
     
-    def isBlur(self,face):
-        val=self.__variance_of_laplacian(face)
+    def isBlur(self):
+        val=self.__variance_of_laplacian(self.LiveFace)
         print("Blurry Variance:",val)
         blurthresh=800
         if val<blurthresh:
@@ -144,8 +144,9 @@ class FaceRecognition:
             return False
         
     def __preprocessing(self,FaceImg):
-        FaceImg=cv2.resize(FaceImg,(92,112))      
-        FaceImg=cv2.cvtColor(FaceImg, cv2.COLOR_BGR2GRAY)
+        FaceImg=cv2.resize(FaceImg,(92,112))
+        if(FaceImg.shape==(112,92,3)):
+            FaceImg=cv2.cvtColor(FaceImg, cv2.COLOR_BGR2GRAY)
         FaceImg=np.expand_dims(FaceImg,axis=2)
         FaceImg=FaceImg.astype('float32')
         FaceImg /= 255
@@ -165,6 +166,8 @@ class FaceRecognition:
         face_img_link=identity+".jpg"
         checkface=cv2.imread(face_img_link,-1)
         checkface=self.__preprocessing(checkface)
+        
+        self.LiveFace=self.__preprocessing(self.LiveFace)
         
         y_pred = self.model.predict([self.LiveFace,checkface])
         
