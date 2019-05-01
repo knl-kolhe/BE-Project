@@ -11,7 +11,7 @@ from keras.models import load_model
 
 class FaceRecognition:
 
-    def __init__(self,FRmodelPath=r'../models/28-04-2019evenlargermodel.h5', protopath=r"../deploy.prototxt", modelpath=r"../res10_300x300_ssd_iter_140000.caffemodel"):
+    def __init__(self,FRmodelPath=r'../models/28-04-2019evenlargermodel.h5', protopath=r"../models/deploy.prototxt", modelpath=r"../models/res10_300x300_ssd_iter_140000.caffemodel"):
         self.model=load_model(FRmodelPath, custom_objects={'contrastive_loss': self.__contrastive_loss})
         self.protoPath = protopath
         self.modelPath = modelpath
@@ -144,8 +144,9 @@ class FaceRecognition:
             return False
         
     def __preprocessing(self,FaceImg):
-        FaceImg=cv2.resize(FaceImg,(92,112))      
-        FaceImg=cv2.cvtColor(FaceImg, cv2.COLOR_BGR2GRAY)
+        FaceImg=cv2.resize(FaceImg,(92,112))
+        if(FaceImg.shape==(112,92,3)):
+            FaceImg=cv2.cvtColor(FaceImg, cv2.COLOR_BGR2GRAY)
         FaceImg=np.expand_dims(FaceImg,axis=2)
         FaceImg=FaceImg.astype('float32')
         FaceImg /= 255

@@ -9,9 +9,13 @@ from FaceRecognition import FaceRecognition
 
 FaceRecognition.help()
 
-FR=FaceRecognition()
+FR=FaceRecognition(r"E:\!Kunal\ML\FaceRecognition\28-04-2019evenlargermodel.h5")
 
 FR.display()
+
+identity="KK"
+
+FR.RegisterId(identity)
 
 
 FR.capture()
@@ -22,7 +26,9 @@ while True:
     else:
         break
 
-identity="KK"
+
+
+
 if(FR.VerifyId(identity)):
     print("person is ",identity)
 else:
