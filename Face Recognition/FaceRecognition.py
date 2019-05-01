@@ -166,6 +166,8 @@ class FaceRecognition:
         checkface=cv2.imread(face_img_link,-1)
         checkface=self.__preprocessing(checkface)
         
+        self.LiveFace=self.__preprocessing(self.LiveFace)
+        
         y_pred = self.model.predict([self.LiveFace,checkface])
         
         
