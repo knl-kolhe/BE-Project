@@ -10,3 +10,6 @@ OCR/Outputs/OutputImages.docx
 OCR/Outputs/OutputImages.pdf
 OCR/Outputs/OutputImagesUncropped.png
 models/28-04-2019evenlargermodel.h5
+models/res10_300x300_ssd_iter_140000.caffemodel
+models/liveness1.model
+models/deploy.prototxt

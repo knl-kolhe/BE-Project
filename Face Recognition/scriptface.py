@@ -13,9 +13,9 @@ FR=FaceRecognition(r"E:\!Kunal\ML\FaceRecognition\28-04-2019evenlargermodel.h5")
 
 FR.display()
 
-identity="KK"
+identity="PR"
 
-FR.RegisterId(identity)
+#FR.RegisterId(identity)
 
 
 FR.capture()
