@@ -102,7 +102,7 @@ class CardOCR:
         #Bigger number more black, Smaller number more white. Start at 70 till you get a good image
         for thresh in range(70,105,15):
             im_bw = cv2.threshold(img_gray, thresh, 255, cv2.THRESH_BINARY)[1]
-            self.display_img(im_bw)
+            #self.display_img(im_bw)
             tempstr=pytesseract.image_to_string(im_bw,lang="eng")
             temp=""
             for i in range(0,len(tempstr)):
@@ -120,12 +120,12 @@ class CardOCR:
             if re.match(reg, tempstr[i]):
                 temp=temp+tempstr[i]
         outputs.append(temp)
-        print("----String, Canny edge detection: ",outputs[-1])
+        #print("----String, Canny edge detection: ",outputs[-1])
         self.BestString=self.__chooseBestString(outputs)
-        print("Best String: ",self.BestString)
+        #print("Best String: ",self.BestString)
         self.CardNumber1=self.__parse_card_no(self.BestString)
         #print("Parsed Card Number (1): ",self.CardNumber1)
-        self.display_img(canny)
+        #self.display_img(canny)
         self.ExpiryDate=self.__parse_expiry_no(self.BestString)
         
         return self.CardNumber1,self.ExpiryDate,self.__luhn(self.CardNumber1)

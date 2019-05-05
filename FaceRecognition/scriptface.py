@@ -11,11 +11,11 @@ FaceRecognition.help()
 
 FR=FaceRecognition(r"E:\!Kunal\ML\FaceRecognition\28-04-2019evenlargermodel.h5")
 
-FR.display()
+#FR.display()
 
-identity="PR"
+identity="Kunal"
 
-#FR.RegisterId(identity)
+FR.RegisterId(identity)
 
 
 FR.capture()
@@ -27,11 +27,15 @@ while True:
         break
 
 
+import time
 
+start=time.time()
 
 if(FR.VerifyId(identity)):
     print("person is ",identity)
 else:
     print("person is not ",identity)
 
+end=time.time()
+print(end-start)
 #FR.verifyID("KK")

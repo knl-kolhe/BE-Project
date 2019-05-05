@@ -117,12 +117,13 @@ class FaceRecognition:
     
     def help():
         print("Functions available are: \n\
-                  Capture() to open camera and capture image \n\
+                  Constructor parameters: the face recognition model parameter, the prototxt of the face detector SSD, the model file of the face detector (Default is the model file as per the github structure\n\
+                  capture() to open camera and capture image \n\
                   isBlur() to test whether image is blurred or not. \n\
                   \tReturn True if blur. \n\
                   \tReturns False if not blur. \n\
-                  faceverify() to perform OCR on the captured image. It returns parsed card number and parsed expiry date and valid variable which tells whether parsed card is a valid card number or not. \n\
-                  display() to display the image saved in Scan() \n")
+                  RegisterID('identity') to to register identity of new person \n\
+                  VerifyId('identity') to verify whether the person in front of the camera is the authorised person \n")
             
     #face_resize2=cv2.resize(face,(92,112)) 
     
