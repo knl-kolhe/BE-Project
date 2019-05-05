@@ -109,7 +109,7 @@ class CardOCR:
                 if re.match(reg, tempstr[i]):
                     temp=temp+tempstr[i]
             outputs.append(temp)
-            print("----String, Manual Threshold: ",outputs[-1])
+            #print("----String, Manual Threshold: ",outputs[-1])
         
         #print("[INFO] performing Canny edge detection...")
         #blurred = cv2.GaussianBlur(img_gray, (5, 5), 1)
