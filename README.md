@@ -1,4 +1,4 @@
-# Simplifying Online transactions using Machine Learning
+# Simplifying online transactions using Machine Learning
 Prototype system in which Online Transactions are authenticated using Face Recognition. The system has an OCR system which automatically reads and parses credit card information and autfills the credit card form. Instead of an OTP, the final transaction is authenticated using facial recogntion. 
 
 ## Models
