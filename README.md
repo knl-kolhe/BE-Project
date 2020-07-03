@@ -1,5 +1,5 @@
-# Bachelor in Engineering Final Year Project
-Repository for my group's BE Project. Members: Kunal Kolhe, Pranav Raka, Aishwarya Karad,  Sakshi Agrawal. Project is to validate online transactions using face recognition.
+# Simplifying Online transactions using Machine Learning
+Prototype system in which Online Transactions are authenticated using Face Recognition. The system has an OCR system which automatically reads and parses credit card information and autfills the credit card form. Instead of an OTP, the final transaction is authenticated using facial recogntion. 
 
 ## Models
 download all required models from the link: https://drive.google.com/open?id=1sjc3BjXMZUFnOjA1d7047V9KLuon0cgY
@@ -20,3 +20,6 @@ For the face recognition model, we used the AT&T dataset with 10 images each of 
 We fed this dataset to a siamese network. The loss function we used was the contrastive loss function. 
 The training set accuracy was 99% and the test set accuracy was 95%. 
 But the model was not robust under bad lighting conditions. To improve the robustness of the model, we tried using a gamma correction to preprocess the image before training. This gave us a marginal improvement of 1-2%.
+
+
+Repository for my group's BE Project. Members: Kunal Kolhe, Pranav Raka, Aishwarya Karad,  Sakshi Agrawal. Project is to validate online transactions using face recognition.
